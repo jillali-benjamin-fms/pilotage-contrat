@@ -1,0 +1,34 @@
+
+server:
+    port: 8181
+    
+#spring:
+#    main:
+#        web-application-type: servlet
+
+#spring.datasource.url=jdbc:mysql://localhost:3306/suiviContrat
+#spring.datasource.username=root
+#spring.datasource.password=''
+#spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+#
+#
+#
+#spring.jpa.show-sql=true
+#spring.jpa.hibernate.ddl-auto=update
+#spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySql5Dialect
+#server-port=9090
+
+
+#spring: 
+#    datasource:
+#        url: jdbc:postgresql://localhost:5431/pilotage_contrat
+#        username: fms_admin
+#        password: password
+#    jpa:
+#        show-sql: true
+#        generate-ddl: true
+#        hibernate:
+#            #ddl-auto: auto
+#        database: POSTGRESQL
+#    main:
+#        web-application-type: servlet
