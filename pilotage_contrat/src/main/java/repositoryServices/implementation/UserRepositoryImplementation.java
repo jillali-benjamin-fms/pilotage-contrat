@@ -41,6 +41,10 @@ public class UserRepositoryImplementation {
         return userRepository.findById(id).get();
     }
     
+    public Optional<Users> findUsersByEmail(String email){
+        return userRepository.findUsersByEmail(email);
+    }
+    
     @Transactional
     public Users updateUser(Users user) {
         log.info("Updating user ", user);

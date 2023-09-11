@@ -9,7 +9,12 @@ import org.springframework.stereotype.Repository;
 import com.fms.entity.Client;
 
 import jakarta.transaction.Transactional;
-
+/**
+ * 
+ * @author FMS
+ * <p>Client repository interface qui extends le JpaRepository<p>.
+ *
+ */
 @Repository
 @Transactional
 public interface ClientRepository extends JpaRepository<Client, Long> {

@@ -39,6 +39,16 @@ public class CommentRepositoryImplementation {
         return commentRepository.findById(id).get();
     }
     
+    public List<Comment> findByUserId(Long id){
+        log.info("Getting the comment with user id:" + id);
+        return commentRepository.findByUserId(id);
+    }
+    
+    public List<Comment> findByContractId(Long id){
+        log.info("Getting the comment with contract id:" + id);
+        return commentRepository.findByContractId(id);
+    }
+    
     @Transactional
     public Comment updateComment(Comment comment) {
         log.info("Updating comment ", comment);
@@ -51,10 +61,11 @@ public class CommentRepositoryImplementation {
         return true;
     }
     
-    public List<Comment> getCommentsByUser(Users user){
-        return commentRepository.findByUserId(user.getId());
-    }
-        
+    public Boolean deleteByUserId(Long id) {
+        log.info("Deleting comment by id: ", id );
+        commentRepository.deleteByUserId(id);
+        return true;
+    }    
     
     
     

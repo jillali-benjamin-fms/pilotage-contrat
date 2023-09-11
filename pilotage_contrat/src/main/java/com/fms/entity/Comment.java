@@ -1,13 +1,16 @@
 package com.fms.entity;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import enums.entity_enums.CommentTypeEnum;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -15,6 +18,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -52,7 +56,8 @@ public class Comment extends AbstractElementsEntity{
 //	public static final String FIND_ALL_COMMENTS_BY_Type = "Comment.findAllCommentsByType";
 	/**
 	 * <p>Date de creation du Comment <p>
-	 */	
+	 */
+    @DateTimeFormat(pattern="dd/MM/yyyy")
 	private LocalDateTime date;
 	
 	/**
@@ -65,6 +70,8 @@ public class Comment extends AbstractElementsEntity{
 	@JsonIgnore
 	private Users profil;
 	
+	
+	
 	//Possibly can be setup as an ENUM
 	/**
 	 * <p>Le type Issue/Risk <p>
@@ -76,6 +83,17 @@ public class Comment extends AbstractElementsEntity{
 	/**
 	 * <p>Le commentaire <p>
 	 */
+	/**
+     * must ask about this one if comment must have contract then better to setup the relationshop in the comment with manytoone link with contract
+     */
+	@NotNull(message = "Contract doit pas etre vide")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "contract_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
+    private Contract contract;
+    
+    
 	@NotNull(message = "Commentaire doit pas etre vide")
 	@Size(min = 2, max = 500, message = "Commentaire est trop court.")
 	private String commentaire;

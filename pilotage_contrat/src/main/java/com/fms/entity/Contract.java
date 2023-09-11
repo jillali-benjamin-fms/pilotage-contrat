@@ -3,6 +3,12 @@ package com.fms.entity;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import enums.entity_enums.ContratAirbItServEnum;
 import enums.entity_enums.ContratAirbusCatEnum;
 import enums.entity_enums.ContratBUEnum;
@@ -15,11 +21,15 @@ import enums.entity_enums.ContratTypeEnum;
 import enums.entity_enums.ContratTypeOldEnum;
 import enums.entity_enums.ContratUOEnum;
 import enums.entity_enums.ContratVFEnum;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,49 +39,84 @@ import lombok.Setter;
 @Setter
 
 public class Contract extends AbstractElementsEntity{
-    
+    /**
+     * <p>Contrat ext?? <p>
+     */
     private String contrat_ext;
-    
+    /**
+     * <p>Contrat TP?? <p>
+     */
     private String contrat_tp;
-    
-    @ManyToOne    
+    /**
+     * <p>Client de contrat. Liee avec l'id de client. <p>
+     */
+    @NotNull(message = "Le client doit pas etre vide")
+    @ManyToOne (fetch = FetchType.LAZY, optional = false)  
+    @JoinColumn(name = "client_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
     private Client client;
-    
+    /**
+     * <p>Montant de contrat. <p>
+     */
     private double amount;
-    
+    /**
+     * <p>Montant commande. <p>
+     */
     private double ordered;
-    
+    /**
+     * <p>l'invoicet. <p>
+     */
     private double invoiced;
     
+    /**
+     * <p>Date de debut de contrat. <p>
+     */
+    @DateTimeFormat(pattern="dd/MM/yyyy")
     private LocalDateTime date_deb;
     
+    /**
+     * <p>Date fin de contrat. <p>
+     */
+    @DateTimeFormat(pattern="dd/MM/yyyy")
     private LocalDateTime date_fin;
     
+    /**
+     * <p>Statut de contrat. <p>
+     */
     @NotNull(message = "Statut de contrat non selectionnes")
     @Enumerated(EnumType.STRING)   
     private ContratStatutEnum statut;
     
+    /**
+     * <p>Contrat probabilite? <p>
+     */
     private double probabilite;
-    
+    /**
+     * <p>Type de contrat. <p>
+     */
     @NotNull(message = "Type de contrat non selectionnes")
     @Enumerated(EnumType.STRING)
-    private ContratTypeEnum type;
+    private ContratTypeEnum type;    
     
     /**
-     * must ask about this one if comment must have contract then better to setup the relationshop in the comment with manytoone link with contract
+     * <p>Contrat nouveau?? <p>
      */
-    @OneToMany
-    private Collection<Comment> commentaire;
-    
     @Enumerated(EnumType.STRING)
     private ContratNouvEnum nouveau;
     
+    /**
+     * <p>Contrat op_fms?? <p>
+     */
     /** Might be manyToMany **/
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "contract")
     private Collection<Users> op_fms;
     
     /**
      * libre mail ou contact
+     */
+    /**
+     * <p>Partenaire du contract?? <p>
      */
     private String partenaireContact;
     
@@ -79,6 +124,10 @@ public class Contract extends AbstractElementsEntity{
     
     private double vise_pondere;
     
+    /**
+     * <p>Prochaine facture?? <p>
+     */
+    @DateTimeFormat(pattern="dd/MM/yyyy")
     private LocalDateTime prochaineFactu;
     
     private int etp;
@@ -107,14 +156,19 @@ public class Contract extends AbstractElementsEntity{
     @Enumerated(EnumType.STRING)
     private ContratCatTPEnum categorie_tp;
     
+    @DateTimeFormat(pattern="dd/MM/yyyy")
     private LocalDateTime deb_po;
     
+    @DateTimeFormat(pattern="dd/MM/yyyy")    
     private LocalDateTime fin_po;
     
+    @DateTimeFormat(pattern="dd/MM/yyyy")
     private LocalDateTime min_livraison;
     
+    @DateTimeFormat(pattern="dd/MM/yyyy")
     private LocalDateTime max_livraison;
     
+    @DateTimeFormat(pattern="dd/MM/yyyy")
     private LocalDateTime commande;
     
     @Enumerated(EnumType.STRING)
@@ -128,8 +182,10 @@ public class Contract extends AbstractElementsEntity{
     
     private long amount_pondere;
     
-    
-    
+    @PrePersist
+    private void init() {
+        setDate_deb(LocalDateTime.now());
+    } 
     
     
     
