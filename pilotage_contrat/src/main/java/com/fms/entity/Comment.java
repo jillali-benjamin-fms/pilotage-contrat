@@ -3,19 +3,22 @@ package com.fms.entity;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
+import org.apache.catalina.User;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fms.enums.entity_enums.CommentTypeEnum;
 
-import enums.entity_enums.CommentTypeEnum;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
@@ -64,10 +67,12 @@ public class Comment extends AbstractElementsEntity{
 	 * <p>L'utilisateur qui a enregistre le commentaire <p>
 	 */	
 	@NotNull(message = "Profil doit pas etre vide")
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "user_id", nullable = false)
-	@OnDelete(action = OnDeleteAction.CASCADE)
-	@JsonIgnore
+	//@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@ManyToOne
+	//@JoinColumn(name = "user_id", nullable = false)
+	//@OnDelete(action = OnDeleteAction.CASCADE)
+	//@JsonIgnore
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private Users profil;
 	
 	
@@ -87,10 +92,12 @@ public class Comment extends AbstractElementsEntity{
      * must ask about this one if comment must have contract then better to setup the relationshop in the comment with manytoone link with contract
      */
 	@NotNull(message = "Contract doit pas etre vide")
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "contract_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
+   // @ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@ManyToOne
+   // @JoinColumn(name = "contract_id", nullable = false)
+  //  @OnDelete(action = OnDeleteAction.CASCADE)
+ //   @JsonIgnore
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Contract contract;
     
     
@@ -102,8 +109,12 @@ public class Comment extends AbstractElementsEntity{
 	 * <p>L'utlisatuer qui doit gere le commenatire... je sais pas trops pour cette donnee <p>
 	 */
 	//Might be @ManyToMany need to clarify
+	//@ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.REMOVE})
+	//@ManyToMany(targetEntity = Users.class, cascade = {CascadeType.MERGE, CascadeType.REMOVE})
+	//@JoinColumn(name = "user_id", nullable = false)
 	@ManyToOne
-	private Users user;
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+	private Users action;
 	
 	/**
 	 * <p>Creation de date automatiquement. <p>
@@ -112,5 +123,21 @@ public class Comment extends AbstractElementsEntity{
 	private void init() {
 		setDate(LocalDateTime.now());
 	}
+	
+//	public Collection<Users> getUser(){
+//	    return this.user;
+//	}
+//	
+//	public void addUser(Users user) {
+//        this.user.add(user);
+//    }
+//    
+//    public void removeUser(long userId) {
+//        Users user = this.user.stream().filter(t -> t.getId() == userId).findFirst().orElse(null);
+//        if (user != null) {
+//          this.user.remove(user);
+//          user.getContracts().remove(this);
+//        }
+//      }
 
 }

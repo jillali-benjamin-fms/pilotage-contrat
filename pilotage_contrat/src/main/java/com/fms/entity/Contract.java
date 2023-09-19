@@ -1,5 +1,6 @@
 package com.fms.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
@@ -7,26 +8,32 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fms.enums.entity_enums.ContratAirbItServEnum;
+import com.fms.enums.entity_enums.ContratAirbusCatEnum;
+import com.fms.enums.entity_enums.ContratBUEnum;
+import com.fms.enums.entity_enums.ContratCatTPEnum;
+import com.fms.enums.entity_enums.ContratIntExtEnum;
+import com.fms.enums.entity_enums.ContratNouvEnum;
+import com.fms.enums.entity_enums.ContratProjetTPEnum;
+import com.fms.enums.entity_enums.ContratStatutEnum;
+import com.fms.enums.entity_enums.ContratTypeEnum;
+import com.fms.enums.entity_enums.ContratTypeOldEnum;
+import com.fms.enums.entity_enums.ContratUOEnum;
+import com.fms.enums.entity_enums.ContratVFEnum;
 
-import enums.entity_enums.ContratAirbItServEnum;
-import enums.entity_enums.ContratAirbusCatEnum;
-import enums.entity_enums.ContratBUEnum;
-import enums.entity_enums.ContratCatTPEnum;
-import enums.entity_enums.ContratIntExtEnum;
-import enums.entity_enums.ContratNouvEnum;
-import enums.entity_enums.ContratProjetTPEnum;
-import enums.entity_enums.ContratStatutEnum;
-import enums.entity_enums.ContratTypeEnum;
-import enums.entity_enums.ContratTypeOldEnum;
-import enums.entity_enums.ContratUOEnum;
-import enums.entity_enums.ContratVFEnum;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
@@ -51,10 +58,12 @@ public class Contract extends AbstractElementsEntity{
      * <p>Client de contrat. Liee avec l'id de client. <p>
      */
     @NotNull(message = "Le client doit pas etre vide")
-    @ManyToOne (fetch = FetchType.LAZY, optional = false)  
-    @JoinColumn(name = "client_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
+    //@ManyToOne (cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.LAZY, optional = false)
+    @ManyToOne
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+   // @JoinColumn(name = "client_id", nullable = false)
+  //  @OnDelete(action = OnDeleteAction.CASCADE)
+   // @JsonIgnore
     private Client client;
     /**
      * <p>Montant de contrat. <p>
@@ -72,14 +81,16 @@ public class Contract extends AbstractElementsEntity{
     /**
      * <p>Date de debut de contrat. <p>
      */
-    @DateTimeFormat(pattern="dd/MM/yyyy")
-    private LocalDateTime date_deb;
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    @DateTimeFormat(pattern="dd-MM-yyyy")
+    private LocalDate date_deb;
     
     /**
      * <p>Date fin de contrat. <p>
      */
-    @DateTimeFormat(pattern="dd/MM/yyyy")
-    private LocalDateTime date_fin;
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    @DateTimeFormat(pattern="dd-MM-yyyy")
+    private LocalDate date_fin;
     
     /**
      * <p>Statut de contrat. <p>
@@ -109,8 +120,17 @@ public class Contract extends AbstractElementsEntity{
      * <p>Contrat op_fms?? <p>
      */
     /** Might be manyToMany **/
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "contract")
-    private Collection<Users> op_fms;
+   // @Column(name = "opFms")
+    //@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    //ManyToMany
+    //@JoinColumn(name = "user_id")
+   // @ManyToMany(mappedBy = "contract", fetch = FetchType.LAZY)
+    
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.REMOVE})
+    @JoinTable(name = "contract_user", joinColumns = @JoinColumn(name = "contract_id"), 
+    inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private Collection<Users> opFms;
+    
     
     /**
      * libre mail ou contact
@@ -127,8 +147,8 @@ public class Contract extends AbstractElementsEntity{
     /**
      * <p>Prochaine facture?? <p>
      */
-    @DateTimeFormat(pattern="dd/MM/yyyy")
-    private LocalDateTime prochaineFactu;
+    @DateTimeFormat(pattern="dd-MM-yyyy")
+    private LocalDate prochaineFactu;
     
     private int etp;
     
@@ -156,20 +176,25 @@ public class Contract extends AbstractElementsEntity{
     @Enumerated(EnumType.STRING)
     private ContratCatTPEnum categorie_tp;
     
-    @DateTimeFormat(pattern="dd/MM/yyyy")
-    private LocalDateTime deb_po;
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    @DateTimeFormat(pattern="dd-MM-yyyy")
+    private LocalDate deb_po;
     
-    @DateTimeFormat(pattern="dd/MM/yyyy")    
-    private LocalDateTime fin_po;
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    @DateTimeFormat(pattern="dd-MM-yyyy")    
+    private LocalDate fin_po;
     
-    @DateTimeFormat(pattern="dd/MM/yyyy")
-    private LocalDateTime min_livraison;
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    @DateTimeFormat(pattern="dd-MM-yyyy")
+    private LocalDate min_livraison;
     
-    @DateTimeFormat(pattern="dd/MM/yyyy")
-    private LocalDateTime max_livraison;
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    @DateTimeFormat(pattern="dd-MM-yyyy")
+    private LocalDate max_livraison;
     
-    @DateTimeFormat(pattern="dd/MM/yyyy")
-    private LocalDateTime commande;
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    @DateTimeFormat(pattern="dd-MM-yyyy")
+    private LocalDate commande;
     
     @Enumerated(EnumType.STRING)
     private ContratTypeOldEnum type_old;
@@ -182,10 +207,22 @@ public class Contract extends AbstractElementsEntity{
     
     private long amount_pondere;
     
-    @PrePersist
-    private void init() {
-        setDate_deb(LocalDateTime.now());
-    } 
+//    @PrePersist
+//    private void init() {
+//        setDate_deb(LocalDateTime.now());
+//    }
+    
+    public void addOpFms(Users user) {
+        this.opFms.add(user);
+    }
+    
+    public void removeOpFms(long userId) {
+        Users opFms = this.opFms.stream().filter(t -> t.getId() == userId).findFirst().orElse(null);
+        if (opFms != null) {
+          this.opFms.remove(opFms);
+          opFms.getContracts().remove(this);
+        }
+      }
     
     
     

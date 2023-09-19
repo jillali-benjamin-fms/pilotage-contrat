@@ -2,9 +2,25 @@ package com.fms.entity;
 
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fms.enums.entity_enums.UserRoleEnum;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.NamedQuery;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -25,7 +41,7 @@ import lombok.Setter;
 //@NamedQuery(name = User.FIND_USER_BY_ID, query = "Select u from User where u.id = :id orderby u.nom")
 //@NamedQuery(name = User.FIND_USER_BY_EMAIL, query = "Select u from User where u.email = :email orderby u.nom")
 //@NamedQuery(name = User.GET_USER_PASSWORD, query = "Select u.password from User where u.password = :password")
-public class Users extends AbstractElementsEntity{
+public class Users extends AbstractElementsEntity implements UserDetails{
 	
 	/**
 	 * <p>les constantes des requêtes <p>
@@ -68,6 +84,48 @@ public class Users extends AbstractElementsEntity{
 	@NotNull(message = "Mot de passe non renseigné!")
 	@Size(min = 8)
 	private String password;
+	
+	@Enumerated(EnumType.STRING)
+	private UserRoleEnum role;
+	
+	@ManyToMany(fetch = FetchType.LAZY, cascade = {
+	        CascadeType.MERGE, CascadeType.REMOVE
+        },
+         mappedBy = "opFms")
+    @JsonBackReference
+	private Collection<Contract> contracts;
+
+	
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        // TODO Auto-generated method stub
+        return List.of(new SimpleGrantedAuthority(role.name()));
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 
 }
 
