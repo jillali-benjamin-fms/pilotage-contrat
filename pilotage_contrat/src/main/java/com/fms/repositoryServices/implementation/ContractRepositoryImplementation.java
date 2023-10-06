@@ -36,6 +36,7 @@ public class ContractRepositoryImplementation {
     
     public Contract getById(long id) {
         log.info("Getting the contract with " + id);
+       // log.info("contract client" + contractRepository.findById(id).get().getClient().getClientBuyer());
         return contractRepository.findById(id).get();
     }
     

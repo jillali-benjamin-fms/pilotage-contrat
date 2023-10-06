@@ -27,6 +27,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern.Flag;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -36,6 +38,10 @@ import lombok.Setter;
 //@AllArgsConstructor
 @Getter
 @Setter
+@Builder
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 
 //@NamedQuery(name = User.FIND_ALL_USERS, query = "Select u from User orderby u.nom")
 //@NamedQuery(name = User.FIND_USER_BY_ID, query = "Select u from User where u.id = :id orderby u.nom")

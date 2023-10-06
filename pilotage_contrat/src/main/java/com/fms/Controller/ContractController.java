@@ -97,16 +97,13 @@ public class ContractController {
     //Need to fix cleint(without and user without ids in url
     @PostMapping("/{userId}/newcontract")
     public ResponseEntity<Contract> saveContract(@PathVariable("userId") long id, @RequestBody @Valid Contract contract) {
-      //  contract.setClient(clientRepository.get(contract))
-        log.info("user id " + userRepository.findById(id).isPresent());
-        Optional<Users> user = userRepository.findById(id);
+        Optional<Users> user = userRepository.findById(id);        
         Optional<Client> optionalClient = clientRepository.findById(contract.getClient().getId());
         if(!optionalClient.isPresent() && !user.isPresent()) {
             return ResponseEntity.unprocessableEntity().build();
         }
         contract.setClient(optionalClient.get());
         contract.addOpFms(user.get());
-        //Contract savedContract = contrac
         return ResponseEntity.ok(contractRepository.create(contract));
     }
     

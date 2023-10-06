@@ -28,5 +28,6 @@ public interface ContractRepository extends JpaRepository<Contract, Long> {
      * @return les utilisateurs qui son dans un contrat
      */
     List<Users> findOpFmsById(Long contractId);
+   // List<Users> getOpFms(Long contractId);
 
 }

@@ -60,7 +60,7 @@ public class Contract extends AbstractElementsEntity{
     @NotNull(message = "Le client doit pas etre vide")
     //@ManyToOne (cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.LAZY, optional = false)
     @ManyToOne
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_WRITE)
    // @JoinColumn(name = "client_id", nullable = false)
   //  @OnDelete(action = OnDeleteAction.CASCADE)
    // @JsonIgnore
@@ -203,7 +203,7 @@ public class Contract extends AbstractElementsEntity{
     private ContratAirbusCatEnum airbus_category;
     
     @Enumerated(EnumType.STRING)
-    private ContratAirbItServEnum airbus_it_serices_capability;
+    private ContratAirbItServEnum airbus_it_services_capability;
     
     private long amount_pondere;
     

@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +19,7 @@ import com.fms.repositoryServices.implementation.UserRepositoryImplementation;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 /**
  * 
  * @author FMS
@@ -25,8 +27,12 @@ import lombok.RequiredArgsConstructor;
  * url localhost:8181/pilotage_contrat/api/v1/user</p>
  *
  */
+//@CrossOrigin(origins = "http://localhost:4200")
+//@CrossOrigin
+//@CrossOrigin
 @RestController
 @RequestMapping(path = "/api/v1/user")
+@Slf4j
 public class UserController {
     
     /**
@@ -42,6 +48,7 @@ public class UserController {
      * <p>url: api/v1/users/users<p>    
      * @return retourne un list des utilisateurs
      */
+   // @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/users")
     public List<Users> getUsers(){
         return userRepository.getUsers();
@@ -79,7 +86,7 @@ public class UserController {
      * <p>url: api/v1/users/updateuser</p>
      * <p>le @@RequestBody prendre les elements dans le cour de requette en generale un json</p>     
      * @return retourne un reponse si le modifications de l'utilisateur est passe ou pas.
-     */    
+     */
     @PostMapping("/updateuser")
     public ResponseEntity<Users> updateUser(@RequestBody Users user){
         return ResponseEntity.ok(userRepository.updateUser(user));
